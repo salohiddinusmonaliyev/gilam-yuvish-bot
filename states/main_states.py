@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 class Order(StatesGroup):
     user = State()
     address = State()
-    service = State()
+    # service = State()
     phone_number_state = State()
     delivery_date = State()
     is_completed = State()

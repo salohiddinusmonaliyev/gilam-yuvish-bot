@@ -1,1 +1,0 @@
-# gilam-yuvish-bot

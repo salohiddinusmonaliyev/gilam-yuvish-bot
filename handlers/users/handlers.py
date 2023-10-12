@@ -71,26 +71,28 @@ async def order(message: types.Message):
 @dp.message_handler(state=Order.address, content_types=types.ContentType.LOCATION)
 async def get_address(message: types.Message, state: FSMContext):
     global address
+    global user
     address = (message.location)
+    user = await db.select_user(telegram_id=message.from_user.id)
     address = get_location_from_coordinates(address.latitude, address.longitude)
     # print(addressss)
     user = await db.select_user(telegram_id=message.from_user.id)
-    await Order.service.set()
+    await Order.phone_number_state.set()
     markup = await services_keyboard()
     # await message.answer("Manzil kiritildi.", reply_markup=back)
-    await message.answer("Xizmat turini tanlang:\n(narx 1kv.m uchun so'mda)", reply_markup=markup)
+    await message.answer("Telefon raqamingizni kiriting", reply_markup=phone_number_key)
 
 
-@dp.callback_query_handler(state=Order.service)
-async def get_service(callback: CallbackQuery, state: FSMContext):
-    global service
-    global user
-    service = await db.get_service(callback.data)
-    await callback.message.edit_text(f"{service[0]['name']} yuvish ximatini tanladizgiz\n{service[0]['description']}")
-    # await callback.message.answer("Yana buyurtma qo'shasizmi?", reply_markup=add_second_order)
-    await callback.message.answer("Telefon raqamingizni kiriting:", reply_markup=phone_number_key)
-    user = await db.select_user(telegram_id=callback.from_user.id)
-    await Order.next()
+# @dp.callback_query_handler(state=Order.service)
+# async def get_service(callback: CallbackQuery, state: FSMContext):
+#     global service
+#     global user
+#     service = await db.get_service(callback.data)
+#     await callback.message.edit_text(f"{service[0]['name']} yuvish ximatini tanladizgiz\n{service[0]['description']}")
+#     # await callback.message.answer("Yana buyurtma qo'shasizmi?", reply_markup=add_second_order)
+#     await callback.message.answer("Telefon raqamingizni kiriting:", reply_markup=phone_number_key)
+#     user = await db.select_user(telegram_id=callback.from_user.id)
+#     await Order.next()
 
 
 @dp.message_handler(state=Order.phone_number_state,content_types=types.ContentType.CONTACT)
@@ -112,7 +114,7 @@ async def end_order(message: types.Message, state: FSMContext):
     global phone_number
     text = "Buyurtma yakunlandi tez orada siz bilan operator bo'glanadi"
     await message.answer(text, reply_markup=main_menu)
-    order = await db.add_order(user_id=int(user['id']), address=address, service_id=int(service[0]['id']),
+    order = await db.add_order(user_id=int(user['id']), address=address, service_id=1,
                                phone_number=str(phone_number),
                                is_completed=False, price=0, delivered=False, supplier_id=None)
     await db.update_count(int(user['id']))
@@ -122,7 +124,6 @@ async def end_order(message: types.Message, state: FSMContext):
 
     await bot.send_message(chat_id=config.ADMINS[0], text=f"<b>Yangi buyurtma</b>\n\nId: {order['id']} \n"
                          f"<b>Manzil:</b> {order['address']} \n"
-                         f"<b>Xizmat turi:</b> {service_id[0]['name']}\n"
                          f"<b>Buyurtmachi telefon raqami:</b> {order['phone_number']}\n"
                             )
     await state.finish()
@@ -144,7 +145,7 @@ async def second_order(message: types.Message, state: FSMContext):
     user = await db.select_user(id=int(order['user_id']))
     await bot.send_message(chat_id=config.ADMINS[0], text=f"<b>Buyurtma raqami:</b> {order['id']} \n"
                                                           f"<b>Manzil:</b> {order['address']} \n"
-                                                          f"<b>Xizmat turi:</b> {service_id[0]['name']}\n"
+                                                         
                                                           f"<b>Buyurtmachi telefon raqami:</b> {order['phone_number']}\n"
                                                           )
     await Order.address.set()

@@ -39,13 +39,9 @@ async def start_pagination(message: types.Message):
             status = "Topshirildi ✅"
         else:
             status = "Topshirilmadi ❌"
-        service_id = int(i['service_id'])
-        service = await db.get_service(service_id)
         orders.append(
             f"Buyurtma raqami: {i['id']} \n"
             f"Manzil: {i['address']} \n"
-            f"Buyurtma holati: {status}\n"
-            f"Xizmat turi: {service[0]['name']}\n"
             f"Buyurtmachi telefon raqami: {i['phone_number']}\n"
         )
     current_page = 1
@@ -53,7 +49,7 @@ async def start_pagination(message: types.Message):
     try:
         await send_page(message.chat.id, current_page, total_pages)
     except:
-        await message.answer("Sizning buyurtmalaringiz mavjud emas!")
+        await message.answer("Sizning buyurtmalaringiz mavjud emas! Siz bu bot orqali faqat botdan buyurtma bergan buyurtmalaringizni ko'ra olasiz.")
 
 
 @dp.message_handler(text="🗓 Buyurtmalar")
@@ -67,7 +63,6 @@ async def start_pagination(message: types.Message):
         orders.append(
             f"Buyurtma raqami: {i['id']} \n"
             f"Manzil: {i['address']} \n"
-            f"Xizmat turi: {service[0]['name']}\n"
             f"Buyurtmachi telefon raqami: {i['phone_number']}\n"
         )
     current_page = 1

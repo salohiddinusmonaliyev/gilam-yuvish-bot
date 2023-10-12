@@ -47,9 +47,9 @@ yes_no.add(yes, no)
 
 address_key = ReplyKeyboardMarkup(resize_keyboard=True)
 location = KeyboardButton("Manzilni ulashish", request_location=True)
-back_btn = KeyboardButton("🔙 Ortga")
+# back_btn = KeyboardButton("🔙 Ortga")
 address_key.add(location)
-address_key.add(back_btn)
+# address_key.add(back_btn)
 
 
 add_second_order = ReplyKeyboardMarkup(resize_keyboard=True)
@@ -71,7 +71,7 @@ def generate_pagination_keyboard(page, total_pages):
 phone_number_key = ReplyKeyboardMarkup(resize_keyboard=True)
 phone_number = KeyboardButton("📤 Telefon raqamni ulashish", request_contact=True)
 phone_number_key.add(phone_number)
-phone_number_key.add(back_btn)
+# phone_number_key.add(back_btn)
 
 back = ReplyKeyboardMarkup(
     resize_keyboard=True,
