@@ -26,3 +26,11 @@ class SetPrice(StatesGroup):
 class Image(StatesGroup):
     id = State()
     image = State()
+
+class Update(StatesGroup):
+    id = State()
+    image = State()
+    
+class Delete(StatesGroup):
+    id = State()
+    

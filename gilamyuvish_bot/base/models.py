@@ -53,12 +53,10 @@ class Order(models.Model):
 
 
 class Invoice(models.Model):
-    order_number = models.CharField(max_length=250, null=True, unique=True)
+    order_number = models.BigIntegerField(null=True, unique=True)
     invoice = models.TextField()
 
     class Meta:
         verbose_name = "Nakladnoy"
         verbose_name_plural = "Nakladnoy"
-        
-    def __str__(self):
-        return self.order_number
+

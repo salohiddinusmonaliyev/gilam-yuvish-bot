@@ -121,7 +121,7 @@ class Database:
 
 
     async def get_invoice(self, id):
-        sql = f"SELECT * FROM base_invoice WHERE order_number={id}"
+        sql = f"SELECT * FROM base_invoice WHERE order_number=CAST({id} AS integer);"
         return await self.execute(sql, fetchrow=True)
 
     async def get_service(self, id):
@@ -151,19 +151,27 @@ class Database:
         WHERE id = $1;
         """
         return await self.execute(sql, id, execute=True)
+        
 
-    # async def update_invoice(self, id, file_id):
-    #     sql = """
-    #     UPDATE base_order
-    #     SET invoice = $2
-    #     WHERE id = $1;
-    #     """
-    #     return await self.execute(sql, id, file_id, execute=True)
+    async def update_invoice(self, id, file_id):
+        sql = """
+        UPDATE base_invoice
+        SET invoice = $2
+        WHERE order_number = $1;
+        """
+        return await self.execute(sql, id, file_id, execute=True)
 
     async def update_count(self, id):
         sql = f"""
         UPDATE base_customuser
         SET count = count + 1
         WHERE id = $1;
+        """
+        return await self.execute(sql, id, execute=True)
+        
+    async def delete_invoice(self, id):
+        sql = f"""
+        DELETE FROM base_invoice
+        WHERE order_number = $1;
         """
         return await self.execute(sql, id, execute=True)
